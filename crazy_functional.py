@@ -11,6 +11,7 @@ def get_crazy_functions():
     from crazy_functions.SourceCode_Analyse import 解析一个Matlab项目
     from crazy_functions.SourceCode_Analyse import 解析一个C项目的头文件
     from crazy_functions.SourceCode_Analyse import 解析一个C项目
+    from crazy_functions.SourceCode_Analyse import 解析一个ROS项目
     from crazy_functions.SourceCode_Analyse import 解析一个Golang项目
     from crazy_functions.SourceCode_Analyse import 解析一个Rust项目
     from crazy_functions.SourceCode_Analyse import 解析一个Java项目
@@ -142,6 +143,13 @@ def get_crazy_functions():
             "AsButton": False,  # 加入下拉菜单中
             "Info": "解析一个C++项目的所有源文件（.cpp/.hpp/.c/.h）| 输入参数为路径",
             "Function": HotReload(解析一个C项目),
+        },
+        "解析整个ROS项目（.cpp/.hpp/.c/.h/.py/.launch）": {
+            "Group": "编程",
+            "Color": "stop",
+            "AsButton": False,  # 加入下拉菜单中
+            "Info": "解析一个ROS功能包的所有源文件和头文件（.cpp/.hpp/.c/.h/.py/.launch）| 输入参数为路径",
+            "Function": HotReload(解析一个ROS项目),
         },
         "解析整个Go项目": {
             "Group": "编程",
