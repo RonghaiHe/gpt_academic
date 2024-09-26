@@ -21,14 +21,18 @@ def 解析源代码新(file_manifest, project_folder, llm_kwargs, plugin_kwargs,
         # 读取文件
         with open(fp, 'r', encoding='utf-8', errors='replace') as f:
             file_content = f.read()
-        prefix = "接下来请你逐文件分析下面的工程" if index==0 else ""
-        i_say = prefix + f'请对下面的程序文件做一个概述文件名是{os.path.relpath(fp, project_folder)}，文件代码是 ```{file_content}```'
+        # prefix = "接下来请你逐文件分析下面的工程" if index==0 else ""
+        # i_say = prefix + f'请对下面的程序文件做一个概述文件名是{os.path.relpath(fp, project_folder)}，文件代码是 ```{file_content}```'
+        # i_say_show_user = prefix + f'[{index+1}/{len(file_manifest)}] 请对下面的程序文件做一个概述: {fp}'
+        prefix = "Now you analysis each file in the following project" if index==0 else ""
+        i_say = prefix + f'Analysis the following program file line by line and skip the copyright at the beginning,name is {os.path.relpath(fp, project_folder)},code is ```{file_content}```'
         i_say_show_user = prefix + f'[{index+1}/{len(file_manifest)}] 请对下面的程序文件做一个概述: {fp}'
         # 装载请求内容
         inputs_array.append(i_say)
         inputs_show_user_array.append(i_say_show_user)
         history_array.append([])
-        sys_prompt_array.append("你是一个程序架构分析师，正在分析一个源代码项目。你的回答必须简单明了。")
+        # sys_prompt_array.append("你是一个程序架构分析师，正在分析一个源代码项目。你的回答必须简单明了。")
+        sys_prompt_array.append("You are a software architect, analyzing a source code project. Your answer must be clear and in Chinese.")
 
     # 文件读取完成，对每一个源代码文件，生成一个请求线程，发送到chatgpt进行分析
     gpt_response_collection = yield from request_gpt_model_multi_threads_with_very_awesome_ui_and_high_efficiency(
@@ -50,12 +54,12 @@ def 解析源代码新(file_manifest, project_folder, llm_kwargs, plugin_kwargs,
     yield from update_ui(chatbot=chatbot, history=history_to_return) # 刷新界面
 
     ############################## <第二步，综合，单线程，分组+迭代处理> ##################################
-    batchsize = 16  # 10个文件为一组
+    batchsize = 8  # 10个文件为一组
     report_part_2 = []
     previous_iteration_files = []
     last_iteration_result = ""
     while True:
-        batchsize = 16
+        batchsize = 8
         if len(file_manifest) == 0: break
         if len(file_manifest) < batchsize: batchsize = len(file_manifest)
         file_dir = os.path.dirname(file_manifest[0])
@@ -194,7 +198,7 @@ def 解析一个C项目(txt, llm_kwargs, plugin_kwargs, chatbot, history, system
     import glob, os
     if os.path.exists(txt):
         project_folder = txt
-        validate_path_safety(project_folder, chatbot.get_user())
+        # validate_path_safety(project_folder, chatbot.get_user())
     else:
         if txt == "": txt = '空空如也的输入栏'
         report_exception(chatbot, history, a = f"解析项目: {txt}", b = f"找不到本地项目或无权访问: {txt}")
